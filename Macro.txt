@@ -1,0 +1,27 @@
+Function Ping(strip)
+Dim objshell, boolcode
+Set objshell = CreateObject("Wscript.Shell")
+boolcode = objshell.Run("ping -n 1 -w 1000 " & strip, 0, True)
+If boolcode = 0 Then
+    Ping = True
+Else
+    Ping = False
+End If
+End Function
+
+Function rsp_time(target)
+
+Set wmi = GetObject("winmgmts://./root/cimv2")
+
+qry = "SELECT * FROM Win32_PingStatus WHERE address='" & target & "'"
+rspTime = 0
+cnt = 0
+    For Each pingStatus In wmi.ExecQuery(qry)
+        If pingStatus.StatusCode = 0 Then
+            rspTime = rspTime + pingStatus.ResponseTime
+            cnt = cnt + 1
+        End If
+    Next
+    rsp_time = rspTime / cnt
+End Function
+
